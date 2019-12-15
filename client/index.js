@@ -148,7 +148,7 @@ remoteSocket.on('data', function (data) {
 		WORKER_PORT = workerPort;
 		setupClient();
 	}
-	client.destroy();
+	remoteSocket.destroy();
 });
 
 // no end from browser
