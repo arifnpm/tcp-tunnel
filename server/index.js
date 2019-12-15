@@ -22,12 +22,7 @@ function startServer(config) {
 		sock.on('end', function (data) {
 			console.log('tunnel data end ', data);
 		});
-		sock.on('close', function (data) {
-			console.log('CLOSED TUNNEL: ' + sock.remoteAddress + ' ' + sock.remotePort);
-		});
-		sock.on('timeout', function () {
-			console.log('TUNNEL TIMEOUT');
-			sock.destroy();
+		function checkAndClose() {
 			tunnelServer.getConnections(function(err, count){
 				if(count < 1) {
 					tunnelServer.close(function(){
@@ -41,6 +36,15 @@ function startServer(config) {
 					})
 				}
 			})
+		}
+		sock.on('close', function (data) {
+			console.log('CLOSED TUNNEL: ' + sock.remoteAddress + ' ' + sock.remotePort);
+			setTimeout(checkAndClose, 60000 * 5);
+		});
+		sock.on('timeout', function () {
+			console.log('TUNNEL TIMEOUT');
+			sock.destroy();
+			setTimeout(checkAndClose, 0);
 		});
 		sock.on('error', function (err) {
 			console.log('Error: ', err);
