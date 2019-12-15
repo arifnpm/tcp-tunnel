@@ -1,10 +1,10 @@
 const net = require('net');
 
 var SERVER_HOST = 'changeme.tld';
-var FWD_HOST = '127.0.0.1';
+var FWD_HOST = '127.0.0.1'; // Change this to your local server hostname/ip
 var TUNNEL_PORT = 6969;
 var WORKER_PORT = 6968;
-var FWD_PORT = 3019;
+var FWD_PORT = 8080; // Change this to your local server port
 
 let client = null;
 let dataBufferClient = Buffer.alloc(0);
