@@ -8,9 +8,13 @@ var CURRENT_PORT = 7000;
 function startServer(config) {
 	var tunnelSock = null;
 	var incomingSock = {};
+	let tunnelServer = null;
+	let workerServer = null;
+	let incomingServer = null;
 
-	net.createServer(function (sock) {
+	tunnelServer = net.createServer(function (sock) {
 		tunnelSock = sock;
+		sock.setTimeout(60000 * 5);
 		console.log('CONNECTED TUNNEL: ' + sock.remoteAddress + ':' + sock.remotePort);
 		sock.on('data', function (data) {
 			console.log('tunnel data ', data);
@@ -24,7 +28,19 @@ function startServer(config) {
 		sock.on('timeout', function () {
 			console.log('TUNNEL TIMEOUT');
 			sock.destroy();
-			tunnelSock = null;
+			tunnelServer.getConnections(function(err, count){
+				if(count < 1) {
+					tunnelServer.close(function(){
+						tunnelServer.unref();
+					})
+					workerServer.close(function(){
+						workerServer.unref();
+					})
+					incomingServer.close(function(){
+						incomingServer.unref();
+					})
+				}
+			})
 		});
 		sock.on('error', function (err) {
 			console.log('Error: ', err);
@@ -32,7 +48,7 @@ function startServer(config) {
 	}).listen(config.tunnelPort, config.tunnelHost);
 	console.log('Tunnel Server listening on ' + config.tunnelHost + ':' + config.tunnelPort);
 	
-	net.createServer(function (sock) {
+	workerServer = net.createServer(function (sock) {
 		console.log('CONNECTED WORKER: ' + sock.remoteAddress + ':' + sock.remotePort);
 		let socketId = null;
 		sock.on('data', function (data) {
@@ -57,7 +73,7 @@ function startServer(config) {
 	}).listen(config.workerPort, config.workerHost);
 	console.log('Worker Server listening on ' + config.workerHost + ':' + config.workerPort);
 	
-	net.createServer(function (sock) {
+	incomingServer = net.createServer(function (sock) {
 		// multiple clients
 		console.log('CONNECTED INCOMING: ' + sock.remoteAddress + ':' + sock.remotePort);
 		var socketId = '_INCOMING_ID_' + uuidv4();
