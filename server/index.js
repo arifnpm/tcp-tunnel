@@ -19,7 +19,7 @@ function startServer(config) {
 			console.log('tunnel data end ', data);
 		});
 		sock.on('close', function (data) {
-			console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
+			console.log('CLOSED TUNNEL: ' + sock.remoteAddress + ' ' + sock.remotePort);
 		});
 		sock.on('error', function (err) {
 			console.log('Error: ', err);

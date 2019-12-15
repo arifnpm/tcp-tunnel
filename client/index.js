@@ -117,11 +117,11 @@ if(printHelp) {
 	console.log("TCP Tunnel Client");
 	console.log("Tunnel local webserver to a remote server");
 	console.log("");
-	console.log("node ./index.js -fh=localhost -fp=8080");
+	console.log('node ./index.js -fh=localhost -fp=8080 -sh="example.com"');
 	console.log("");
 	console.log("-fh \t Specify local webserver hostname to be redirected (default to 127.0.0.1)");
 	console.log("-fp \t Specify local webserver port (default to 8080)");
-	console.log("-sh \t Specify remote server hoostname");
+	console.log("-sh \t Specify remote server hostname");
 	return;
 }
 
@@ -151,6 +151,7 @@ remoteSocket.on('data', function (data) {
 		TUNNEL_PORT = tunnelPort;
 		WORKER_PORT = workerPort;
 		setupClient();
+		console.log('Your server should be accessible from http://' + SERVER_HOST + ':' + incomingPort);
 	}
 	remoteSocket.destroy();
 });
