@@ -3,6 +3,7 @@ const uuidv4 = require("uuid/v4");
 
 var REMOTE_HOST = '0.0.0.0';
 var REMOTE_PORT = 6996;
+var CURRENT_PORT = 7000;
 
 function startServer(config) {
 	var tunnelSock = null;
@@ -103,22 +104,45 @@ net.createServer(function (sock) {
 		console.log('remote data ', data);
 		// detect creation
 		if(data.indexOf("_START_SERVER_")===0) {
-			let content = data.slice("_START_SERVER_".length, data.indexOf(";;")) + "";
-			let arrContent = content.split(";");
-			let tunnelHost = arrContent[0];
-			let tunnelPort = arrContent[1];
-			let workerHost = arrContent[2];
-			let workerPort = arrContent[3];
-			let incomingHost = arrContent[4];
-			let incomingPort = arrContent[5];
-			startServer({
-				tunnelHost,
-				tunnelPort,
-				workerHost,
-				workerPort,
-				incomingHost,
-				incomingPort
-			})
+			if(data.indexOf(";;") >= 0) {
+				// remote definition
+				let content = data.slice("_START_SERVER_".length + 1, data.indexOf(";;")) + "";
+				let arrContent = content.split(";");
+				let tunnelHost = arrContent[0];
+				let tunnelPort = arrContent[1];
+				let workerHost = arrContent[2];
+				let workerPort = arrContent[3];
+				let incomingHost = arrContent[4];
+				let incomingPort = arrContent[5];
+				startServer({
+					tunnelHost,
+					tunnelPort,
+					workerHost,
+					workerPort,
+					incomingHost,
+					incomingPort
+				});
+			}else{
+				// auto port assignment
+				let tunnelHost = REMOTE_HOST;
+				let tunnelPort = CURRENT_PORT++;
+				let workerHost = REMOTE_HOST;
+				let workerPort = CURRENT_PORT++;
+				let incomingHost = REMOTE_HOST;
+				let incomingPort = CURRENT_PORT++;
+				startServer({
+					tunnelHost,
+					tunnelPort,
+					workerHost,
+					workerPort,
+					incomingHost,
+					incomingPort
+				});
+				sock.write("_SERVER_STARTED_;" + 
+					tunnelHost + ";" + tunnelPort + ";" + 
+					workerHost + ";" + workerPort + ";" + 
+					incomingHost + ";" + incomingPort + ";;");
+			}
 		}
 	});
 	sock.on('end', function (data) {
