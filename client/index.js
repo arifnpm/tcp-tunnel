@@ -101,6 +101,9 @@ for(let i=0;i<process.argv.length;i++) {
 	if(process.argv[i].indexOf("-fh")===0) {
 		FWD_HOST = curArgv.split("=")[1];
 	}
+	if(process.argv[i].indexOf("-sh")===0) {
+		SERVER_HOST = curArgv.split("=")[1];
+	}
 	if(
 		process.argv[i].indexOf("-h")===0 || process.argv[i].indexOf("-help")===0 || 
 		process.argv[i].indexOf("-h")===0 || process.argv[i].indexOf("--help")===0 || 
@@ -118,6 +121,7 @@ if(printHelp) {
 	console.log("");
 	console.log("-fh \t Specify local webserver hostname to be redirected (default to 127.0.0.1)");
 	console.log("-fp \t Specify local webserver port (default to 8080)");
+	console.log("-sh \t Specify remote server hoostname");
 	return;
 }
 
