@@ -21,6 +21,11 @@ function startServer(config) {
 		sock.on('close', function (data) {
 			console.log('CLOSED TUNNEL: ' + sock.remoteAddress + ' ' + sock.remotePort);
 		});
+		sock.on('timeout', function () {
+			console.log('TUNNEL TIMEOUT');
+			sock.destroy();
+			tunnelSock = null;
+		});
 		sock.on('error', function (err) {
 			console.log('Error: ', err);
 		});
