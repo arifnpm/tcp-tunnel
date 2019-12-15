@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# System Files
+.DS_Store
+._.DS_Store
+Thumbs.db
+
+# Dependency directory
+node_modules
+bower_components/
+
+# Linter
+linters/
+
+# testing
+/coverage
+
+# compiled output
+/build
+/Release
+/dist
+/dll
+.tmp
+documentation/*.html
+
+# environments
+# .env
+
+# VSCode Configurations
+/.vscode
+
+# Sonar Lint 
+.sonarlint
